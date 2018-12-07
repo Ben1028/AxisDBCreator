@@ -1,0 +1,15 @@
+project(AxisDBCreator)
+
+set(SOURCE_FILES AxisDBCreator.cpp AxisDBCreator.h Objects.h SQLite.cpp SQLite.h sqlite3.c sqlite3.h)
+add_executable(AxisDBCreator ${SOURCE_FILES})
+
+if (MSVC)
+    set (CMAKE_C_FLAGS "/O2")
+    set (CMAKE_CXX_FLAGS "/O2 /std:c++17")
+else (MSVC)
+    if (UNIX)
+        set(CMAKE_C_FLAGS "-s -O3")
+        set(CMAKE_CXX_FLAGS "-s -O3 -std=c++17 -pthread")
+        target_link_libraries(AxisDBCreator stdc++fs pthread dl)
+    endif (UNIX)
+endif(MSVC)

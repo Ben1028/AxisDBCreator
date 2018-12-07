@@ -3,7 +3,6 @@
 #include "sqlite3.h"
 #include <string>
 #include <vector>
-#include <windows.h>
 
 namespace SQLite
 {

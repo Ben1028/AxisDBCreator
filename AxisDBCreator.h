@@ -3,7 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <filesystem>
+#include <experimental/filesystem>
+#include <algorithm>
 #include <sstream>
 #include <map>
 using namespace std;
@@ -49,24 +50,24 @@ namespace fs = std::experimental::filesystem;
 ofstream logFile;
 bool SortDB();
 void InsertDB();
-void LoadSingleDirectory(string &sPath);
+void LoadSingleDirectory(const string &sPath);
 bool LoadTable(string &sPath);
-bool LoadFile(string &sPath);
+bool LoadFile(const string &sPath);
 void ReadItem(ifstream &file, CItem *cObject, bool bMulti = false);
 void ReadChar(ifstream &file, CChar *cObject);
 void ReadMap(ifstream &file, CMap *cObject);
 void ReadSpawn(ifstream &file, CTemplate *cObject);
 void ReadTemplate(ifstream &file, CTemplate *cObject);
 void ReadList(ifstream &file, CObject *cObject, vector<CObject*> &vList);
-void ReadTypes(ifstream &file, string &sPath);
-void ReadDef(ifstream &file, string &sPath);
-void ReadMsg(ifstream &file, string &sPath);
+void ReadTypes(ifstream &file, const string &sPath);
+void ReadDef(ifstream &file, const string &sPath);
+void ReadMsg(ifstream &file, const string &sPath);
 
 //Replace all instances of 'from' by 'to' in 'str'
 void ReplaceAll(string &str, const string& from, const string& to)
 {
 	size_t start_pos = 0;
-	while ((start_pos = str.find(from, start_pos)) != string::npos) 
+	while ((start_pos = str.find(from, start_pos)) != string::npos)
 	{
 		str.replace(start_pos, from.length(), to);
 		start_pos += to.length();
@@ -96,8 +97,8 @@ string MakeUpper(string s)
 
 string GetFilename(string s)
 {
-	//remove all before the last '\'
-	size_t pos = s.find_last_of("\\");
+	//remove all before the last '\' or '/'
+	size_t pos = s.find_last_of("\\/");
 	if (pos != string::npos)
 	{
 		s.erase(0, pos + 1);
@@ -218,7 +219,7 @@ void logData(string data)
 //0 = string
 //1 = hex number
 //2 = decimal number
-UINT IsStrType(string s)
+unsigned int IsStrType(string s)
 {
 	//hex or string
 	if (s.find("0") == 0)
@@ -231,7 +232,7 @@ UINT IsStrType(string s)
 		{
 			return 0;
 		}
-		
+
 	}
 	//decimal
 	else if (s.find_first_not_of("0123456789") == string::npos)
