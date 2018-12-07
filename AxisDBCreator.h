@@ -244,3 +244,24 @@ UINT IsStrType(string s)
 		return 0;
 	}
 }
+
+//Change decimal string to hex
+string MakeHex(string s)
+{
+	if (IsStrType(s) == 2)
+	{
+		string sHex = "0";
+		int iTemp = 0;
+		stringstream is, hs;
+
+		is << s;
+		is >> iTemp;
+		hs << hex << iTemp;
+		sHex += hs.str();
+		return sHex;
+	}
+	else
+	{
+		return s;
+	}
+}

@@ -810,7 +810,7 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sID = search->second;
+			pData->sID = MakeHex(search->second);
 		}
 		while (IsStrType(pData->sColor) == 0)
 		{
@@ -819,7 +819,7 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sColor = search->second;
+			pData->sColor = MakeHex(search->second);
 		}
 		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Item VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + pData->sID + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + pData->sColor + "','" + pData->sDupe + "','" + pData->sPath + "')");
 		delete pData;
@@ -836,7 +836,7 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sID = search->second;
+			pData->sID = MakeHex(search->second);
 		}
 		while (IsStrType(pData->sColor) == 0)
 		{
@@ -845,7 +845,7 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sColor = search->second;
+			pData->sColor = MakeHex(search->second);
 		}
 		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Multi VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + pData->sID + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + pData->sColor + "','" + pData->sDupe + "','" + pData->sPath + "')");
 		delete pData;
@@ -862,7 +862,7 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sID = search->second;
+			pData->sID = MakeHex(search->second);
 		}
 		while (IsStrType(pData->sColor) == 0)
 		{
@@ -871,7 +871,7 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sColor = search->second;
+			pData->sColor = MakeHex(search->second);
 		}
 		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Char VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + pData->sID + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + pData->sColor + "','" + pData->sPath + "')");
 		delete pData;
