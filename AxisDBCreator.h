@@ -35,8 +35,8 @@ vector<CItem*> _vItems;
 vector<CItem*> _vMultis;
 vector<CChar*> _vChars;
 vector<CMap*> _vMap;
-vector<CTemplate*> _vSpawns;
-vector<CTemplate*> _vTemplates;
+vector<CChar*> _vSpawns;
+vector<CItem*> _vTemplates;
 vector<CList*> _vFunctions;
 vector<CObject*> _vSpells;
 vector<CObject*> _vSkills;
@@ -52,11 +52,11 @@ void InsertDB();
 void LoadSingleDirectory(string &sPath);
 bool LoadTable(string &sPath);
 bool LoadFile(string &sPath);
-void ReadItem(ifstream &file, CItem *cObject, bool bMulti = false);
+void ReadItem(ifstream &file, CItem *cObject);
 void ReadChar(ifstream &file, CChar *cObject);
 void ReadMap(ifstream &file, CMap *cObject);
-void ReadSpawn(ifstream &file, CTemplate *cObject);
-void ReadTemplate(ifstream &file, CTemplate *cObject);
+void ReadSpawn(ifstream &file, CChar *cObject);
+void ReadTemplate(ifstream &file, CItem *cObject);
 void ReadList(ifstream &file, CObject *cObject, vector<CObject*> &vList);
 void ReadTypes(ifstream &file, string &sPath);
 void ReadDef(ifstream &file, string &sPath);
@@ -98,6 +98,40 @@ string GetFilename(string s)
 {
 	//remove all before the last '\'
 	size_t pos = s.find_last_of("\\");
+	if (pos != string::npos)
+	{
+		s.erase(0, pos + 1);
+	}
+	return s;
+}
+
+string GetLastPath(string s)
+{
+	//remove all after the last '\'
+	size_t pos = s.find_last_of("\\");
+	if (pos != string::npos)
+	{
+		s.erase(pos);
+	}
+	//remove all before the last directory
+	pos = s.find_last_of("\\");
+	if (pos != string::npos)
+	{
+		s.erase(0, pos + 1);
+	}
+	return s;
+}
+
+string GetFirstPath(string s)
+{
+	//remove all after the first directory '\'
+	size_t pos = s.find_first_of("\\", 1);
+	if (pos != string::npos)
+	{
+		s.erase(pos);
+	}
+	//remove all before the first '\' (if path starts with '\')
+	pos = s.find_first_of("\\");
 	if (pos != string::npos)
 	{
 		s.erase(0, pos + 1);
@@ -264,4 +298,8 @@ string MakeHex(string s)
 	{
 		return s;
 	}
+}
+
+string HexToInt(string hexstr) {
+	return to_string((int)strtol(hexstr.c_str(), 0, 16));
 }

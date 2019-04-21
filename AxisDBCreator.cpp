@@ -2,6 +2,8 @@
 
 // arg[1]: string
 // path to spheretables.scp or single file
+// arg[2]: string
+// Database Name
 int main(int argc, char *argv[])
 {
 	//return 0 = success
@@ -10,15 +12,61 @@ int main(int argc, char *argv[])
 	int iReturn = 2;
 	string sPath;
 
-	if (argc == 1)
-	{
-		printf("No path specified. Please enter one now.\n");
-		cin >> sPath;
-	}
-	else if (argc > 1)
+	//if (argc >= 3)
+	//{
+	//	return 0; //block this section
+	//	string sMin = HexToInt(argv[1]);
+	//	string sMax = HexToInt(argv[2]);
+	//	if (!DBCreateData.Open(DBName.c_str()))
+	//	{
+	//		Table TBData;
+	//		if (argc == 4)
+	//		{
+	//			TBData = DBCreateData.QuerySQL("SELECT * FROM Item WHERE DecID BETWEEN '" + sMin + "' AND '" + sMax + "' AND ID != Itemdef ORDER BY DecID ASC");
+	//		}
+	//		else
+	//		{
+	//			TBData = DBCreateData.QuerySQL("SELECT * FROM Item WHERE DecID BETWEEN '" + sMin + "' AND '" + sMax + "' AND ID == Itemdef ORDER BY DecID ASC");
+	//		}
+	//		TBData.ResetRow();
+	//		while (TBData.GoNext())
+	//		{
+	//			ifstream file(TBData.GetValue("File"));
+	//			if (!file.is_open())
+	//			{
+	//				printf(("ERROR: Unable to open file " + TBData.GetValue("File") + "\n").c_str());
+	//				return false;
+	//			}
+	//			file.seekg(_atoi64(TBData.GetValue("Pos").c_str()));
+	//			string sLine;
+	//			getline(file, sLine);
+	//			printf((sLine + "\n").c_str());
+	//			while (getline(file, sLine))
+	//			{
+	//				if (sLine.find("[") == 0) //End of Block, EXIT
+	//				{
+	//					break;
+	//				}
+	//				printf((sLine + "\n").c_str());
+	//			}
+	//			file.close();
+	//		}
+	//		DBCreateData.Close();
+	//	}
+	//	//printf("No path specified. Please enter one now.\n");
+	//	//cin >> sPath;
+	//}
+	//else 
+
+	if (argc > 1)
 	{
 		sPath = argv[1];
 	}
+	if (argc > 2)
+	{
+		DBName = argv[2];
+	}
+
 
 	if (!sPath.empty())
 	{
@@ -26,15 +74,12 @@ int main(int argc, char *argv[])
 
 		if (!DBCreateData.Open(DBName.c_str()))
 		{
-			logFile.open("AxisLog.txt");
+			logFile.open("AxisDBLog.txt");
 			DBCreateData.BeginTransaction();
 			if (MakeUpper(GetFilename(sPath)) == "SPHERETABLES.SCP")
 			{
 				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Item");
 				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Char");
-				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Multi");
-				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Template");
-				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Spawn");
 				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Map");
 				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Function");
 				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Spell");
@@ -43,11 +88,8 @@ int main(int argc, char *argv[])
 				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS Type");
 				DBCreateData.ExecuteSQL("DROP TABLE IF EXISTS DefMsg");
 
-				DBCreateData.ExecuteSQL("CREATE TABLE 'Item' (Itemdef TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, Def TEXT COLLATE NOCASE, ID TEXT COLLATE NOCASE, Desc TEXT COLLATE NOCASE, Sub TEXT COLLATE NOCASE, Cat TEXT COLLATE NOCASE, Color TEXT COLLATE NOCASE, Dupe TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE)");
-				DBCreateData.ExecuteSQL("CREATE TABLE 'Char' (Chardef TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, Def TEXT COLLATE NOCASE, ID TEXT COLLATE NOCASE, Desc TEXT COLLATE NOCASE, Sub TEXT COLLATE NOCASE, Cat TEXT COLLATE NOCASE, Color TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE)");
-				DBCreateData.ExecuteSQL("CREATE TABLE 'Multi' (Multidef TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, Def TEXT COLLATE NOCASE, ID TEXT COLLATE NOCASE, Desc TEXT COLLATE NOCASE, Sub TEXT COLLATE NOCASE, Cat TEXT COLLATE NOCASE, Color TEXT COLLATE NOCASE, Dupe TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE)");
-				DBCreateData.ExecuteSQL("CREATE TABLE 'Template' (Template TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, ID TEXT COLLATE NOCASE, Desc TEXT COLLATE NOCASE, Sub TEXT COLLATE NOCASE, Cat TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE)");
-				DBCreateData.ExecuteSQL("CREATE TABLE 'Spawn' (Spawn TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, ID TEXT COLLATE NOCASE, Desc TEXT COLLATE NOCASE, Sub TEXT COLLATE NOCASE, Cat TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE)");
+				DBCreateData.ExecuteSQL("CREATE TABLE 'Item' (Itemdef TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, Def TEXT COLLATE NOCASE, ID TEXT COLLATE NOCASE, Desc TEXT COLLATE NOCASE, Sub TEXT COLLATE NOCASE, Cat TEXT COLLATE NOCASE, Color TEXT COLLATE NOCASE, Dupe TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE, Pos TEXT, DecID INT, Type INT)");
+				DBCreateData.ExecuteSQL("CREATE TABLE 'Char' (Chardef TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, Def TEXT COLLATE NOCASE, ID TEXT COLLATE NOCASE, Desc TEXT COLLATE NOCASE, Sub TEXT COLLATE NOCASE, Cat TEXT COLLATE NOCASE, Color TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE, Pos TEXT, DecID INT, Type INT)");
 				DBCreateData.ExecuteSQL("CREATE TABLE 'Map' (Areadef TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, Desc TEXT COLLATE NOCASE, Sub TEXT COLLATE NOCASE, Cat TEXT COLLATE NOCASE, Point TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE)");
 				DBCreateData.ExecuteSQL("CREATE TABLE 'Function' (Name TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, File TEXT COLLATE NOCASE)");
 				DBCreateData.ExecuteSQL("CREATE TABLE 'Spell' (ID TEXT PRIMARY KEY NOT NULL COLLATE NOCASE, Def TEXT COLLATE NOCASE, Name TEXT COLLATE NOCASE, File TEXT COLLATE NOCASE)");
@@ -61,9 +103,6 @@ int main(int argc, char *argv[])
 			{
 				DBCreateData.ExecuteSQL("DELETE FROM Item WHERE File = '" + sPath + "'");
 				DBCreateData.ExecuteSQL("DELETE FROM Char WHERE File = '" + sPath + "'");
-				DBCreateData.ExecuteSQL("DELETE FROM Multi WHERE File = '" + sPath + "'");
-				DBCreateData.ExecuteSQL("DELETE FROM Template WHERE File = '" + sPath + "'");
-				DBCreateData.ExecuteSQL("DELETE FROM Spawn WHERE File = '" + sPath + "'");
 				DBCreateData.ExecuteSQL("DELETE FROM Map WHERE File = '" + sPath + "'");
 				DBCreateData.ExecuteSQL("DELETE FROM Function WHERE File = '" + sPath + "'");
 				DBCreateData.ExecuteSQL("DELETE FROM Spell WHERE File = '" + sPath + "'");
@@ -130,7 +169,10 @@ bool LoadTable(string &sPath)
 			{
 
 				ReplaceAll(sLine, string("/"), string("\\"));
-				sLine.erase(0,sLine.find("\\") + 1);
+				if (MakeUpper(GetFirstPath(sLine)) == (MakeUpper(GetLastPath(sPath))))
+				{
+					sLine.erase(0, sLine.find("\\") + 1);
+				}
 				string sLoad = sPath + sLine;
 
 				if (sUpper.find(".SCP") != string::npos)
@@ -190,6 +232,8 @@ bool LoadFile(string &sPath)
 	printf(("Reading file: " + sPath + "\n").c_str());
 
 	string sLine;
+	streampos oldpos = file.tellg();
+	char buffer[_MAX_U64TOSTR_BASE2_COUNT];
 	while (getline(file, sLine))
 	{
 		StripStr(sLine);
@@ -202,6 +246,8 @@ bool LoadFile(string &sPath)
 			cObject->sDefname = cObject->sIndex;
 			cObject->sID = cObject->sIndex;
 			cObject->sPath = sPath;
+			_i64toa_s(oldpos, buffer, _countof(buffer), 10);
+			cObject->sPos = buffer;
 			ReadItem(file, cObject);
 		}
 		else if (sUpper.find("[MULTIDEF") == 0)
@@ -211,7 +257,17 @@ bool LoadFile(string &sPath)
 			cObject->sDefname = cObject->sIndex;
 			cObject->sID = cObject->sIndex;
 			cObject->sPath = sPath;
-			ReadItem(file, cObject, true);
+			if (!IsStrType(cObject->sIndex))
+			{
+				cObject->iType = 1;
+			}
+			else
+			{
+				cObject->iType = 2;
+			}
+			_i64toa_s(oldpos, buffer, _countof(buffer), 10);
+			cObject->sPos = buffer;
+			ReadItem(file, cObject);
 		}
 		else if (sUpper.find("[CHARDEF") == 0)
 		{
@@ -220,6 +276,8 @@ bool LoadFile(string &sPath)
 			cObject->sDefname = cObject->sIndex;
 			cObject->sID = cObject->sIndex;
 			cObject->sPath = sPath;
+			_i64toa_s(oldpos, buffer, _countof(buffer), 10);
+			cObject->sPos = buffer;
 			ReadChar(file, cObject);
 		}
 		else if ((sUpper.find("[AREA") == 0) || (sUpper.find("[ROOM") == 0))
@@ -231,18 +289,26 @@ bool LoadFile(string &sPath)
 		}
 		else if (sUpper.find("[SPAWN ") == 0)
 		{
-			CTemplate * cObject = new CTemplate;
+			CChar * cObject = new CChar;
 			cObject->sIndex = GetIndex(sLine);
+			cObject->sDefname = cObject->sIndex;
 			cObject->sID = cObject->sIndex;
 			cObject->sPath = sPath;
+			cObject->iType = 1;
+			_i64toa_s(oldpos, buffer, _countof(buffer), 10);
+			cObject->sPos = buffer;
 			ReadSpawn(file, cObject);
 		}
 		else if (sUpper.find("[TEMPLATE ") == 0)
 		{
-			CTemplate * cObject = new CTemplate;
+			CItem * cObject = new CItem;
 			cObject->sIndex = GetIndex(sLine);
+			cObject->sDefname = cObject->sIndex;
 			cObject->sID = cObject->sIndex;
 			cObject->sPath = sPath;
+			cObject->iType = 3;
+			_i64toa_s(oldpos, buffer, _countof(buffer), 10);
+			cObject->sPos = buffer;
 			ReadTemplate(file, cObject);
 		}
 		else if (sUpper.find("[TYPEDEF ") == 0)
@@ -295,6 +361,7 @@ bool LoadFile(string &sPath)
 		{
 			ReadMsg(file, sPath);
 		}
+		oldpos = file.tellg();
 	}
 
 	if (file.bad())
@@ -308,7 +375,7 @@ bool LoadFile(string &sPath)
 	return true;
 }
 
-void ReadItem(ifstream &file, CItem *cObject, bool bMulti)
+void ReadItem(ifstream &file, CItem *cObject)
 {
 	string sKey, sValue, sValueRaw;
 	bool bIgnore = false;
@@ -317,6 +384,7 @@ void ReadItem(ifstream &file, CItem *cObject, bool bMulti)
 	streampos oldpos = file.tellg();
 	while (getline(file, sLine))
 	{
+		//printf((sLine + "\n").c_str());
 		StripStr(sLine);
 		string sUpper = MakeUpper(sLine);
 
@@ -377,10 +445,10 @@ void ReadItem(ifstream &file, CItem *cObject, bool bMulti)
 		{
 			cObject->sID = sValue;
 		}
-		else if ((sKey == "TYPE") && (MakeUpper(sValue).find("T_MULTI") == 0) && (!bIgnore))
+		else if ((sKey == "TYPE") && (MakeUpper(sValue).find("T_MULTI") == 0) && (cObject->iType == 0) && (!bIgnore))
 		{
 
-			bMulti = true;
+			cObject->iType = 1;
 		}
 	}
 	_mDefs[cObject->sDefname] = cObject->sID;
@@ -396,8 +464,7 @@ void ReadItem(ifstream &file, CItem *cObject, bool bMulti)
 		logData("ID '" + cObject->sID + "' Refers to itself (No valid ID) file:" + cObject->sPath + "\n");
 		cObject->sID = "0";
 	}
-
-	if (bMulti)
+	if (cObject->iType == 2)
 	{
 		_vMultis.push_back(cObject);
 	}
@@ -541,7 +608,7 @@ void ReadMap(ifstream &file, CMap *cObject)
 	_vMap.push_back(cObject);
 }
 
-void ReadSpawn(ifstream &file, CTemplate *cObject)
+void ReadSpawn(ifstream &file, CChar *cObject)
 {
 	string sKey, sValue, sValueRaw;
 
@@ -587,6 +654,7 @@ void ReadSpawn(ifstream &file, CTemplate *cObject)
 			cObject->sID = sValue;
 		}
 	}
+	_mDefs[cObject->sIndex] = cObject->sID;
 
 	//Replace all @ in description with the subsection
 	if (cObject->sDesc.find("@") != string::npos)
@@ -603,7 +671,7 @@ void ReadSpawn(ifstream &file, CTemplate *cObject)
 	_vSpawns.push_back(cObject);
 }
 
-void ReadTemplate(ifstream &file, CTemplate *cObject)
+void ReadTemplate(ifstream &file, CItem *cObject)
 {
 	string sKey, sValue, sValueRaw;
 
@@ -649,6 +717,7 @@ void ReadTemplate(ifstream &file, CTemplate *cObject)
 			cObject->sID = sValue;
 		}
 	}
+	_mDefs[cObject->sIndex] = cObject->sID;
 
 	//Replace all @ in description with the subsection
 	if (cObject->sDesc.find("@") != string::npos)
@@ -808,9 +877,10 @@ void InsertDB()
 			auto search = _mDefs.find(pData->sID);
 			if (search == _mDefs.end())
 			{
+				logData("Item '" + pData->sIndex + "' has an invalid ID: " + pData->sID +" file:" + pData->sPath + "\n");
 				break;
 			}
-			pData->sID = MakeHex(search->second);
+			pData->sID = search->second;
 		}
 		while (IsStrType(pData->sColor) == 0)
 		{
@@ -819,9 +889,9 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sColor = MakeHex(search->second);
+			pData->sColor = search->second;
 		}
-		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Item VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + pData->sID + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + pData->sColor + "','" + pData->sDupe + "','" + pData->sPath + "')");
+		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Item VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + MakeHex(pData->sID) + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + MakeHex(pData->sColor) + "','" + MakeHex(pData->sDupe) + "','" + pData->sPath + "','" + pData->sPos + "','" + HexToInt(pData->sID) + "','" + to_string(pData->iType) + "')");
 		delete pData;
 		pData = NULL;
 	}
@@ -834,9 +904,10 @@ void InsertDB()
 			auto search = _mDefs.find(pData->sID);
 			if (search == _mDefs.end())
 			{
+				logData("Multi '" + pData->sIndex + "' has an invalid ID: " + pData->sID + " file:" + pData->sPath + "\n");
 				break;
 			}
-			pData->sID = MakeHex(search->second);
+			pData->sID = search->second;
 		}
 		while (IsStrType(pData->sColor) == 0)
 		{
@@ -845,9 +916,9 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sColor = MakeHex(search->second);
+			pData->sColor = search->second;
 		}
-		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Multi VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + pData->sID + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + pData->sColor + "','" + pData->sDupe + "','" + pData->sPath + "')");
+		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Item VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + MakeHex(pData->sID) + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + MakeHex(pData->sColor) + "','" + MakeHex(pData->sDupe) + "','" + pData->sPath + "','" + pData->sPos + "','" + HexToInt(pData->sID) + "','" + to_string(pData->iType) + "')");
 		delete pData;
 		pData = NULL;
 	}
@@ -860,9 +931,10 @@ void InsertDB()
 			auto search = _mDefs.find(pData->sID);
 			if (search == _mDefs.end())
 			{
+				logData("Char '" + pData->sIndex + "' has an invalid ID: " + pData->sID + " file:" + pData->sPath + "\n");
 				break;
 			}
-			pData->sID = MakeHex(search->second);
+			pData->sID = search->second;
 		}
 		while (IsStrType(pData->sColor) == 0)
 		{
@@ -871,9 +943,9 @@ void InsertDB()
 			{
 				break;
 			}
-			pData->sColor = MakeHex(search->second);
+			pData->sColor = search->second;
 		}
-		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Char VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + pData->sID + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + pData->sColor + "','" + pData->sPath + "')");
+		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Char VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + MakeHex(pData->sID) + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + MakeHex(pData->sColor) + "','" + pData->sPath + "','" + pData->sPos + "','" + HexToInt(pData->sID) + "','" + to_string(pData->iType) + "')");
 		delete pData;
 		pData = NULL;
 	}
@@ -894,11 +966,12 @@ void InsertDB()
 			auto search = _mDefs.find(pData->sID);
 			if (search == _mDefs.end())
 			{
+				logData("Spawn '" + pData->sIndex + "' has an invalid ID: " + pData->sID + " file:" + pData->sPath + "\n");
 				break;
 			}
 			pData->sID = search->second;
 		}
-		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Spawn VALUES('" + pData->sIndex + "','" + pData->sID + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + pData->sPath + "')");
+		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Char VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + MakeHex(pData->sID) + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + MakeHex(pData->sColor) + "','" + pData->sPath + "','" + pData->sPos + "','" + HexToInt(pData->sID) + "','" + to_string(pData->iType) + "')");
 		delete pData;
 		pData = NULL;
 	}
@@ -911,11 +984,12 @@ void InsertDB()
 			auto search = _mDefs.find(pData->sID);
 			if (search == _mDefs.end())
 			{
+				logData("Template '" + pData->sIndex + "' has an invalid ID: " + pData->sID + " file:" + pData->sPath + "\n");
 				break;
 			}
 			pData->sID = search->second;
 		}
-		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Template VALUES('" + pData->sIndex + "','" + pData->sID + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + pData->sPath + "')");
+		DBCreateData.ExecuteSQL("INSERT OR REPLACE INTO Item VALUES('" + pData->sIndex + "','" + pData->sDefname + "','" + MakeHex(pData->sID) + "','" + pData->sDesc + "','" + pData->sSub + "','" + pData->sCat + "','" + MakeHex(pData->sColor) + "','" + MakeHex(pData->sDupe) + "','" + pData->sPath + "','" + pData->sPos + "','" + HexToInt(pData->sID) + "','" + to_string(pData->iType) + "')");
 		delete pData;
 		pData = NULL;
 	}

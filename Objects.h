@@ -14,6 +14,8 @@ public:
 	string sDefname;
 	string sID;
 	string sPath;
+	string sPos;
+	int	   iType = 0;
 };
 
 class CChar
@@ -27,6 +29,8 @@ public:
 	string sDefname;
 	string sID;
 	string sPath;
+	string sPos;
+	int	   iType = 0;
 };
 
 class CMap
