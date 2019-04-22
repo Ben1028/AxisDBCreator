@@ -148,7 +148,7 @@ bool LoadTable(string &sPath)
 	sPath.erase(sPath.rfind("\\") + 1); //trim end
 
 	string sLine;
-	while (getline(file, sLine)) 
+	while (getline(file, sLine))
 	{
 		string sUpper = MakeUpper(sLine);
 
@@ -164,7 +164,7 @@ bool LoadTable(string &sPath)
 		else if (bProcess)
 		{
 			StripStr(sLine);
-			
+
 			if (!sLine.empty())
 			{
 
@@ -199,7 +199,7 @@ bool LoadTable(string &sPath)
 	return true;
 }
 
-void LoadSingleDirectory(string &sPath)
+void LoadSingleDirectory(const string &sPath)
 {
 	for (const auto & p : fs::directory_iterator(sPath))
 	{
@@ -213,7 +213,7 @@ void LoadSingleDirectory(string &sPath)
 }
 
 
-bool LoadFile(string &sPath)
+bool LoadFile(const string &sPath)
 {
 	ifstream file(sPath);
 	if (!file.is_open())
@@ -774,7 +774,7 @@ void ReadList(ifstream &file, CObject *cObject, vector<CObject*> &vList)
 	vList.push_back(cObject);
 }
 
-void ReadTypes(ifstream &file, string &sPath)
+void ReadTypes(ifstream &file, const string &sPath)
 {
 	string sKey;
 
@@ -804,7 +804,7 @@ void ReadTypes(ifstream &file, string &sPath)
 	}
 }
 
-void ReadDef(ifstream &file, string &sPath)
+void ReadDef(ifstream &file, const string &sPath)
 {
 	string sKey, sValue;
 
@@ -833,7 +833,7 @@ void ReadDef(ifstream &file, string &sPath)
 	}
 }
 
-void ReadMsg(ifstream &file, string &sPath)
+void ReadMsg(ifstream &file, const string &sPath)
 {
 	string sKey, sValue;
 

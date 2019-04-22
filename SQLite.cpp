@@ -1,4 +1,11 @@
 #include "SQLite.h"
+#include <cstring>
+
+#ifdef _WIN32
+    #define strcmpi _strcmpi
+#else
+    #define strcmpi strcasecmp
+#endif
 
 namespace SQLite
 {
@@ -100,16 +107,19 @@ namespace SQLite
 
 	void Database::ConvertUTF8ToString(char * strInUTF8MB, stdvstring & strOut)
 	{
-		int len = (int)strlen(strInUTF8MB) + 1;
-		strOut.resize(len, 0);
-
-
-		WCHAR * wChar = new WCHAR[len];
-		wChar[0] = 0;
-		MultiByteToWideChar(CP_UTF8, 0, strInUTF8MB, len, wChar, len);
-		WideCharToMultiByte(CP_ACP, 0, wChar, len, &strOut[0], len, 0, 0);
-		delete[] wChar;
-
+		int len=(int)strlen(strInUTF8MB)+1;
+        strOut.resize(len, 0);
+        wchar_t * wChar = new wchar_t[len];
+        wChar[0]=0;
+#ifdef _WIN32
+        size_t aux = 0;
+        mbstowcs_s(&aux, wChar, len*sizeof(wchar_t), strInUTF8MB,len);
+        wcstombs_s(&aux, &strOut[0], len*sizeof(char), wChar, len);
+#else
+        mbstowcs(wChar,strInUTF8MB,len);
+        wcstombs(&strOut[0],wChar,len);
+#endif
+        delete [] wChar;
 	}
 
 	int Database::ExecuteSQL(std::string strSQL)
@@ -247,7 +257,7 @@ namespace SQLite
 		if (m_iPos < 0) return 0;
 		for (int i = 0; i < m_iCols; i++)
 		{
-			if (!_stricmp(&m_strlstCols[i][0], lpColName.c_str()))
+			if (!strcmpi(&m_strlstCols[i][0], lpColName.c_str()))
 			{
 				return &m_lstRows[m_iPos][i][0];
 			}
@@ -268,7 +278,7 @@ namespace SQLite
 		if (m_iPos < 0) return 0;
 		for (int i = 0; i < m_iCols; i++)
 		{
-			if (!_stricmp(&m_strlstCols[i][0], lpColName.c_str()))
+			if (!strcmpi(&m_strlstCols[i][0], lpColName.c_str()))
 			{
 				return &m_lstRows[m_iPos][i][0];
 			}
