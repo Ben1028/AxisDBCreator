@@ -107,14 +107,13 @@ namespace SQLite
 
 	void Database::ConvertUTF8ToString(char * strInUTF8MB, stdvstring & strOut)
 	{
-		int len=(int)strlen(strInUTF8MB)+1;
-        strOut.resize(len, 0);
-        wchar_t * wChar = new wchar_t[len];
-        wChar[0]=0;
+		size_t len=strlen(strInUTF8MB);
+        strOut.resize(len + 1, 0);
+        wchar_t * wChar = new wchar_t[len + 1]();
 #ifdef _WIN32
         size_t aux = 0;
-        mbstowcs_s(&aux, wChar, len*sizeof(wchar_t), strInUTF8MB,len);
-        wcstombs_s(&aux, &strOut[0], len*sizeof(char), wChar, len);
+        mbstowcs_s(&aux, wChar, len + 1, strInUTF8MB,len);
+        wcstombs_s(&aux, &strOut[0], len + 1, wChar, len);
 #else
         mbstowcs(wChar,strInUTF8MB,len);
         wcstombs(&strOut[0],wChar,len);
